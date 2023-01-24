@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Post } from '@nestjs/common';
 import { UserService } from './user.service';
 import * as bcrypt from 'bcrypt';
 
@@ -15,5 +15,24 @@ export class UserController {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     return this.userService.create({ name, email, password: hashedPassword });
+  }
+
+  @Post('signin')
+  async signIn(
+    @Body('email') email: string,
+    @Body('password') password: string,
+  ) {
+    const fetchedUser = await this.userService.findOne({
+      email,
+    });
+    if (!fetchedUser) {
+      throw new BadRequestException('invalid email or password');
+    }
+
+    if (!(await bcrypt.compare(password, fetchedUser.password))) {
+      throw new BadRequestException('invalid email or password');
+    }
+
+    return fetchedUser;
   }
 }
