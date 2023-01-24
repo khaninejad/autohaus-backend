@@ -1,0 +1,22 @@
+version: '3.8'
+services:
+  app:
+    image: node:18-alpine
+    working_dir: /app
+    command: yarn start:dev
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+    environment:
+      - NODE_ENV=development
+    depends_on:
+      - db
+  db:
+    image: mongo:latest
+    volumes:
+      - db-data:/data/db
+    ports:
+      - "27017:27017"
+volumes:
+  db-data:
