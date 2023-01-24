@@ -1,0 +1,34 @@
+name: Build, Test and Deploy
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Install yarn
+      run: npm install -g yarn
+
+    - name: Build the Docker image
+      run: docker-compose build
+      
+    - name: install dependencies
+      run: docker-compose run --rm app yarn install 
+
+    - name: Test the application
+      run: docker-compose run --rm app yarn test
+
+    #- name: Push the image to the registry
+    #  run: |
+    #    echo "$REGISTRY_PASSWORD" | docker login -u "$REGISTRY_USER" --password-stdin
+    #    docker-compose push
+        
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Deploy to production
+      run: echo "Deploying to production..."
