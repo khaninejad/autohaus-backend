@@ -1,13 +1,22 @@
-import { BadRequestException, Body, Controller, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Request,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import * as bcrypt from 'bcrypt';
-import { JwtService } from '@nestjs/jwt';
+import { AuthGuard } from '@nestjs/passport';
+import { AuthService } from './auth/auth.service';
+import { JwtAuthGuard } from './auth/jwt-auth.guard';
 
 @Controller('api')
 export class UserController {
   constructor(
     private readonly userService: UserService,
-    private jwtService: JwtService,
+    private authService: AuthService,
   ) {}
 
   @Post('signup')
@@ -18,38 +27,28 @@ export class UserController {
   ) {
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    return this.userService.create({
+    const user = await this.userService.create({
       name,
       email,
       role: 'user',
       password: hashedPassword,
     });
+    delete user.password;
+    return user;
   }
 
+  @UseGuards(AuthGuard('local'))
   @Post('signin')
   async signIn(
-    @Body('email') email: string,
+    @Body('username') username: string,
     @Body('password') password: string,
   ) {
-    const fetchedUser = await this.userService.findOne({
-      email,
-    });
-    if (!fetchedUser) {
-      throw new BadRequestException('invalid email or password');
-    }
+    return this.authService.login({ username, password });
+  }
 
-    if (!(await bcrypt.compare(password, fetchedUser.password))) {
-      throw new BadRequestException('invalid email or password');
-    }
-
-    const payload = {
-      email: fetchedUser.email,
-      role: fetchedUser.role,
-    };
-    return {
-      access_token: await this.jwtService.signAsync(payload, {
-        expiresIn: '60s',
-      }),
-    };
+  @UseGuards(JwtAuthGuard)
+  @Get('profile')
+  async getProfile(@Request() req) {
+    return req.user;
   }
 }

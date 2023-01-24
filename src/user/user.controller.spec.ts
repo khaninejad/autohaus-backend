@@ -7,6 +7,9 @@ import { UserController } from './user.controller';
 import { User, UserDocument } from './user.schema';
 import { UserService } from './user.service';
 import { JwtModule, JwtService } from '@nestjs/jwt';
+import configuration from '../shared/config';
+import { randomUUID } from 'crypto';
+import { AuthService } from './auth/auth.service';
 
 describe('UserController', () => {
   let controller: UserController;
@@ -20,7 +23,7 @@ describe('UserController', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
         JwtModule.register({
-          secretOrPrivateKey: process.env.SECRETKEY || 'secretKey',
+          secretOrPrivateKey: configuration().secretKey,
           signOptions: {
             expiresIn: 3600,
           },
@@ -29,6 +32,7 @@ describe('UserController', () => {
       controllers: [UserController],
       providers: [
         UserService,
+        AuthService,
         {
           provide: JwtService,
           useValue: {
@@ -56,9 +60,16 @@ describe('UserController', () => {
         email: 'john.doe@example.com',
         password: 'password123',
         role: 'user',
+        _id: randomUUID(),
       };
 
-      jest.spyOn(service, 'create').mockResolvedValue(createUserDto);
+      jest.spyOn(service, 'create').mockResolvedValue({
+        _id: createUserDto._id,
+        name: createUserDto.name,
+        email: createUserDto.email,
+        password: createUserDto.password,
+        role: createUserDto.role,
+      });
 
       const result = await controller.signup(
         createUserDto.name,
@@ -74,6 +85,7 @@ describe('UserController', () => {
         email: 'john.doe@example.com',
         password: 'password123',
         role: 'user',
+        _id: randomUUID(),
       };
       jest.spyOn(userModel, 'create').mockImplementation(async () => {
         throw new Error('error');
@@ -83,15 +95,22 @@ describe('UserController', () => {
   });
 
   describe('Signin', () => {
-    it('should successfully sigin in', async () => {
+    it('should successfully signin in', async () => {
       const createUserDto: CreateUserDto = {
         name: 'John Doe',
         email: 'john.doe@example.com',
         password: 'password123',
         role: 'user',
+        _id: null,
       };
 
-      jest.spyOn(service, 'findOne').mockResolvedValue(createUserDto);
+      jest.spyOn(service, 'findOne').mockResolvedValue({
+        _id: createUserDto._id,
+        name: createUserDto.name,
+        email: createUserDto.email,
+        password: createUserDto.password,
+        role: createUserDto.role,
+      });
 
       const result = await controller.signIn(
         createUserDto.email,
@@ -106,6 +125,7 @@ describe('UserController', () => {
         email: 'john.doe@example.com',
         password: 'password123',
         role: 'user',
+        _id: randomUUID(),
       };
       jest.spyOn(service, 'findOne').mockImplementation(async () => {
         throw new Error('unexpected error');
