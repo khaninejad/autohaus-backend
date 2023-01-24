@@ -1,10 +1,14 @@
 import { BadRequestException, Body, Controller, Post } from '@nestjs/common';
 import { UserService } from './user.service';
 import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
 
 @Controller('api')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private jwtService: JwtService,
+  ) {}
 
   @Post('signup')
   async signup(
@@ -14,7 +18,12 @@ export class UserController {
   ) {
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    return this.userService.create({ name, email, password: hashedPassword });
+    return this.userService.create({
+      name,
+      email,
+      role: 'user',
+      password: hashedPassword,
+    });
   }
 
   @Post('signin')
@@ -33,6 +42,14 @@ export class UserController {
       throw new BadRequestException('invalid email or password');
     }
 
-    return fetchedUser;
+    const payload = {
+      email: fetchedUser.email,
+      role: fetchedUser.role,
+    };
+    return {
+      access_token: await this.jwtService.signAsync(payload, {
+        expiresIn: '60s',
+      }),
+    };
   }
 }

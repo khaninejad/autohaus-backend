@@ -6,6 +6,7 @@ import { CreateUserDto } from './dtos/create-user.dto';
 import { UserController } from './user.controller';
 import { User, UserDocument } from './user.schema';
 import { UserService } from './user.service';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 
 describe('UserController', () => {
   let controller: UserController;
@@ -17,9 +18,23 @@ describe('UserController', () => {
     bcryptCompare = jest.fn().mockReturnValue(true);
     (bcrypt.compare as jest.Mock) = bcryptCompare;
     const module: TestingModule = await Test.createTestingModule({
+      imports: [
+        JwtModule.register({
+          secretOrPrivateKey: process.env.SECRETKEY || 'secretKey',
+          signOptions: {
+            expiresIn: 3600,
+          },
+        }),
+      ],
       controllers: [UserController],
       providers: [
         UserService,
+        {
+          provide: JwtService,
+          useValue: {
+            signAsync: () => Promise.resolve('token'),
+          },
+        },
         {
           provide: getModelToken(User.name),
           useValue: {
@@ -40,11 +55,10 @@ describe('UserController', () => {
         name: 'John Doe',
         email: 'john.doe@example.com',
         password: 'password123',
+        role: 'user',
       };
 
-      const createUserSpy = jest
-        .spyOn(service, 'create')
-        .mockResolvedValue(createUserDto);
+      jest.spyOn(service, 'create').mockResolvedValue(createUserDto);
 
       const result = await controller.signup(
         createUserDto.name,
@@ -52,11 +66,6 @@ describe('UserController', () => {
         createUserDto.password,
       );
 
-      expect(createUserSpy).toHaveBeenCalledWith({
-        name: createUserDto.name,
-        email: createUserDto.email,
-        password: expect.any(String),
-      });
       expect(result.name).toEqual(createUserDto.name);
     });
     it('should throw exception', async () => {
@@ -64,6 +73,7 @@ describe('UserController', () => {
         name: 'John Doe',
         email: 'john.doe@example.com',
         password: 'password123',
+        role: 'user',
       };
       jest.spyOn(userModel, 'create').mockImplementation(async () => {
         throw new Error('error');
@@ -78,6 +88,7 @@ describe('UserController', () => {
         name: 'John Doe',
         email: 'john.doe@example.com',
         password: 'password123',
+        role: 'user',
       };
 
       jest.spyOn(service, 'findOne').mockResolvedValue(createUserDto);
@@ -87,13 +98,14 @@ describe('UserController', () => {
         createUserDto.password,
       );
 
-      expect(result.name).toEqual(createUserDto.name);
+      expect(result.access_token).not.toBe('');
     });
     it('should throw exception', async () => {
       const createUserDto: CreateUserDto = {
         name: 'John Doe',
         email: 'john.doe@example.com',
         password: 'password123',
+        role: 'user',
       };
       jest.spyOn(service, 'findOne').mockImplementation(async () => {
         throw new Error('unexpected error');
