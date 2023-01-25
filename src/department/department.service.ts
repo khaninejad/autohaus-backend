@@ -31,4 +31,11 @@ export class DepartmentService {
       throw new Error('unexpected error');
     }
   }
+  findByName(name: string) {
+    try {
+      return this.departmentModel.findOne({ name: name }).select('_id');
+    } catch (error) {
+      throw new Error('unexpected error');
+    }
+  }
 }

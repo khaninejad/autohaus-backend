@@ -9,12 +9,16 @@ import {
   Request,
   UseGuards,
   UnauthorizedException,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { EmployeeService } from './employee.service';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { JwtAuthGuard } from '..//user/auth/jwt-auth.guard';
 import { UserService } from '../user/user.service';
+import { FileInterceptor } from '@nestjs/platform-express';
+import * as fs from 'fs';
 
 @Controller('api/employee')
 export class EmployeeController {
@@ -58,6 +62,12 @@ export class EmployeeController {
   async remove(@Param('id') id: string, @Request() req) {
     await this.checkPermission(req);
     return this.employeeService.remove(id);
+  }
+
+  @Post('import')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadFile(@UploadedFile() file: Express.Multer.File) {
+    await this.employeeService.parse(file.path);
   }
 
   private async checkPermission(req: any) {
