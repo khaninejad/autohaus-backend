@@ -4,6 +4,8 @@ import { DepartmentService } from './department.service';
 import { JwtAuthGuard } from '../user/auth/jwt-auth.guard';
 import { Department } from './department.schema';
 import { getModelToken } from '@nestjs/mongoose';
+import { UserService } from '../user/user.service';
+import { User } from '../user/user.schema';
 
 describe('DepartmentController', () => {
   let controller: DepartmentController;
@@ -14,8 +16,16 @@ describe('DepartmentController', () => {
       controllers: [DepartmentController],
       providers: [
         DepartmentService,
+        UserService,
         {
           provide: getModelToken(Department.name),
+          useValue: {
+            create: () => Promise.resolve(),
+            findOne: () => Promise.resolve(),
+          },
+        },
+        {
+          provide: getModelToken(User.name),
           useValue: {
             create: () => Promise.resolve(),
             findOne: () => Promise.resolve(),
@@ -43,7 +53,11 @@ describe('DepartmentController', () => {
         description: 'Department Description',
       };
       const createSpy = jest.spyOn(service, 'create').mockImplementation();
-      await controller.create(createDepartmentDto);
+      jest.spyOn(controller, 'checkPermission').mockImplementation();
+      await controller.create(
+        createDepartmentDto,
+        new Request('http://localhost'),
+      );
       expect(createSpy).toHaveBeenCalledWith(createDepartmentDto);
     });
   });

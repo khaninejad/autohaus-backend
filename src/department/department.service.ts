@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Department, DepartmentDocument } from './department.schema';
 import { CreateDepartmentDto } from './dto/create-department.dto';
+import { UpdateDepartmentDto } from './dto/update-department.dto';
 
 @Injectable()
 export class DepartmentService {
@@ -37,5 +38,13 @@ export class DepartmentService {
     } catch (error) {
       throw new Error('unexpected error');
     }
+  }
+
+  async update(id: string, updateDepartmentDto: UpdateDepartmentDto) {
+    return this.departmentModel.updateOne({ _id: id }, updateDepartmentDto);
+  }
+
+  async remove(id: string) {
+    return this.departmentModel.deleteOne({ _id: id });
   }
 }

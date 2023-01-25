@@ -6,6 +6,7 @@ import { Department, DepartmentSchema } from './department.schema';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import configuration from '../shared/config';
+import { UserService } from 'src/user/user.service';
 
 @Module({
   imports: [
@@ -19,6 +20,6 @@ import configuration from '../shared/config';
     }),
   ],
   controllers: [DepartmentController],
-  providers: [DepartmentService],
+  providers: [DepartmentService, UserService],
 })
 export class DepartmentModule {}
