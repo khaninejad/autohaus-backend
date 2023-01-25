@@ -6,12 +6,14 @@ import { Department, DepartmentSchema } from './department.schema';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import configuration from '../shared/config';
-import { UserService } from 'src/user/user.service';
+import { UserService } from '../user/user.service';
+import { User, UserSchema } from '../user/user.schema';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: Department.name, schema: DepartmentSchema },
+      { name: User.name, schema: UserSchema },
     ]),
     PassportModule,
     JwtModule.register({
