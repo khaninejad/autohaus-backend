@@ -22,18 +22,22 @@ export class EmployeeService {
   }
 
   findAll() {
-    return `This action returns all employee`;
+    return this.employeeModel.find().exec();
   }
 
   findOne(id: string) {
-    return `This action returns a #${id} employee`;
+    try {
+      return this.employeeModel.findOne({ _id: id }).exec();
+    } catch (error) {
+      throw new Error('unexpected error');
+    }
   }
 
-  update(id: string, updateEmployeeDto: UpdateEmployeeDto) {
-    return `This action updates a #${id} employee`;
+  async update(id: string, updateEmployeeDto: UpdateEmployeeDto) {
+    return this.employeeModel.updateOne({ _id: id }, updateEmployeeDto);
   }
 
-  remove(id: string) {
-    return `This action removes a #${id} employee`;
+  async remove(id: string) {
+    return this.employeeModel.deleteOne({ _id: id });
   }
 }

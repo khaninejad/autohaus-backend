@@ -1,10 +1,11 @@
-import { Prop, SchemaFactory } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
-import { HydratedDocument } from 'mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Department } from '../department/department.schema';
+import { HydratedDocument } from 'mongoose';
 
 export type EmployeeDocument = HydratedDocument<Employee>;
 
+@Schema()
 export class Employee {
   _id: string;
 
