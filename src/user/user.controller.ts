@@ -11,6 +11,7 @@ import * as bcrypt from 'bcrypt';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth/auth.service';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
+import { UserInterface } from './dto/user.interface';
 
 @Controller('api')
 export class UserController {
@@ -50,5 +51,19 @@ export class UserController {
   @Get('profile')
   async getProfile(@Request() req) {
     return req.user;
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('users')
+  async findAll() {
+    const users = await this.userService.findAll();
+
+    return users.map((user): UserInterface => {
+      return {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+      };
+    });
   }
 }

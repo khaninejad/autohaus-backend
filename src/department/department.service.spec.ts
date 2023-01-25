@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { DepartmentService } from './department.service';
 import { Department, DepartmentDocument } from './department.schema';
-import { CreateDepartmentDto } from './dto/create-department.dto';
 import { Model } from 'mongoose';
 import { getModelToken } from '@nestjs/mongoose';
 
