@@ -22,7 +22,7 @@ export class EmployeeService {
   }
 
   findAll() {
-    return this.employeeModel.find().exec();
+    return this.employeeModel.find().populate('department').exec();
   }
 
   findOne(id: string) {
