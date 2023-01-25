@@ -3,6 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UserModule } from './user/user.module';
 import { DepartmentModule } from './department/department.module';
 import { EmployeeModule } from './employee/employee.module';
+import { TrackHistoryModule } from './track_history/track_history.module';
 
 @Module({
   imports: [
@@ -10,6 +11,7 @@ import { EmployeeModule } from './employee/employee.module';
     UserModule,
     DepartmentModule,
     EmployeeModule,
+    TrackHistoryModule,
   ],
   controllers: [],
   providers: [],

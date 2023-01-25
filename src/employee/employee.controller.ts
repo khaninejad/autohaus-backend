@@ -18,20 +18,27 @@ import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { JwtAuthGuard } from '..//user/auth/jwt-auth.guard';
 import { UserService } from '../user/user.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import * as fs from 'fs';
+import { TrackHistoryService } from '../track_history/track_history.service';
 
 @Controller('api/employee')
 export class EmployeeController {
   constructor(
     private readonly employeeService: EmployeeService,
     private readonly userService: UserService,
+    private readonly trackHistoryService: TrackHistoryService,
   ) {}
 
   @UseGuards(JwtAuthGuard)
   @Post()
   async create(@Body() createEmployeeDto: CreateEmployeeDto, @Request() req) {
     await this.checkPermission(req);
-    return this.employeeService.create(createEmployeeDto);
+    const employee = await this.employeeService.create(createEmployeeDto);
+    await this.trackHistoryService.create({
+      action: 'assign',
+      employee: employee._id,
+      user: req.user.user_id,
+      created_at: new Date().toISOString(),
+    });
   }
 
   @Get()

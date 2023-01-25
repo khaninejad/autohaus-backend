@@ -1,5 +1,7 @@
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
+import { TrackHistory } from '../track_history/track_history.schema';
+import { TrackHistoryService } from '../track_history/track_history.service';
 import { Department } from '../department/department.schema';
 import { DepartmentService } from '../department/department.service';
 import { User } from '../user/user.schema';
@@ -18,6 +20,7 @@ describe('EmployeeController', () => {
         EmployeeService,
         UserService,
         DepartmentService,
+        TrackHistoryService,
         {
           provide: getModelToken(Employee.name),
           useValue: {
@@ -37,6 +40,13 @@ describe('EmployeeController', () => {
           useValue: {
             create: () => Promise.resolve(),
             findOne: () => Promise.resolve(),
+          },
+        },
+        {
+          provide: getModelToken(TrackHistory.name),
+          useValue: {
+            create: () => Promise.resolve(),
+            findByEmployee: () => Promise.resolve(),
           },
         },
       ],
