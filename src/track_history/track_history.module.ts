@@ -4,6 +4,7 @@ import { UserService } from 'src/user/user.service';
 import { User, UserSchema } from 'src/user/user.schema';
 import { TrackHistory, TrackHistorySchema } from './track_history.schema';
 import { TrackHistoryService } from './track_history.service';
+import { TrackHistoryController } from './track_history.controller';
 
 @Module({
   imports: [
@@ -12,7 +13,7 @@ import { TrackHistoryService } from './track_history.service';
       { name: User.name, schema: UserSchema },
     ]),
   ],
-  controllers: [],
+  controllers: [TrackHistoryController],
   providers: [TrackHistoryService, UserService],
   exports: [TrackHistoryService],
 })

@@ -12,7 +12,10 @@ import { MulterModule } from '@nestjs/platform-express';
 import { DepartmentService } from '../department/department.service';
 import { Department, DepartmentSchema } from '../department/department.schema';
 import { TrackHistoryService } from '../track_history/track_history.service';
-import { TrackHistory, TrackHistorySchema } from 'src/track_history/track_history.schema';
+import {
+  TrackHistory,
+  TrackHistorySchema,
+} from 'src/track_history/track_history.schema';
 
 @Module({
   imports: [
