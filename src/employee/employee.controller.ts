@@ -28,7 +28,7 @@ export class EmployeeController {
   async create(@Body() createEmployeeDto: CreateEmployeeDto, @Request() req) {
     await this.checkPermission(req);
     return this.employeeService.create(createEmployeeDto);
-  }  
+  }
 
   @Get()
   @UseGuards(JwtAuthGuard)
