@@ -17,6 +17,7 @@ import configuration from '../shared/config';
       secret: configuration().secretKey,
       signOptions: { expiresIn: configuration().expiresIn },
     }),
+    DepartmentDocument,
   ],
   controllers: [DepartmentController],
   providers: [DepartmentService],
