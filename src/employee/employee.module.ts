@@ -6,11 +6,14 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import configuration from '../shared/config';
 import { Employee, EmployeeSchema } from './employee.schema';
+import { UserService } from 'src/user/user.service';
+import { User, UserSchema } from 'src/user/user.schema';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: Employee.name, schema: EmployeeSchema },
+      { name: User.name, schema: UserSchema },
     ]),
     PassportModule,
     JwtModule.register({
@@ -19,6 +22,6 @@ import { Employee, EmployeeSchema } from './employee.schema';
     }),
   ],
   controllers: [EmployeeController],
-  providers: [EmployeeService],
+  providers: [EmployeeService, UserService],
 })
 export class EmployeeModule {}

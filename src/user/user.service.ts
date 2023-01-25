@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 import { CreateUserDto } from './dto/create-user.dto';
 import { SignInUserDto } from './dto/signin-user.dto';
 import { User, UserDocument } from './user.schema';
+import * as mongoose from 'mongoose';
 
 @Injectable()
 export class UserService {
@@ -25,6 +26,13 @@ export class UserService {
   async findOne(signInUserDto: SignInUserDto): Promise<User> {
     try {
       return this.userModel.findOne({ ...signInUserDto }).exec();
+    } catch (error) {
+      throw new Error('unexpected error');
+    }
+  }
+  async findById(id: string): Promise<User> {
+    try {
+      return this.userModel.findById(new mongoose.Types.ObjectId(id)).exec();
     } catch (error) {
       throw new Error('unexpected error');
     }

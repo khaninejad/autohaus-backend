@@ -1,5 +1,6 @@
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
+import { UserService } from 'src/user/user.service';
 import { EmployeeController } from './employee.controller';
 import { Employee } from './employee.schema';
 import { EmployeeService } from './employee.service';
@@ -12,6 +13,7 @@ describe('EmployeeController', () => {
       controllers: [EmployeeController],
       providers: [
         EmployeeService,
+        UserService,
         {
           provide: getModelToken(Employee.name),
           useValue: {
