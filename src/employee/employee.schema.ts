@@ -16,7 +16,19 @@ export class Employee {
   last_name: string;
 
   @Prop()
-  address: string;
+  street: string;
+
+  @Prop()
+  nr: string;
+
+  @Prop()
+  plz: string;
+
+  @Prop()
+  ort: string;
+
+  @Prop()
+  land: string;
 
   @Prop()
   job_title: string;

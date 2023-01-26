@@ -84,13 +84,11 @@ export class EmployeeService {
             first_name: item.Vorname,
             last_name: item.Nachname,
             job_title: item.Position,
-            address: JSON.stringify({
-              street: item.Strasse,
-              Nr: item.Nr,
-              PLZ: item.PLZ,
-              Ort: item.Ort,
-              Land: item.Land,
-            }),
+            street: item.Strasse,
+            nr: item.Nr,
+            plz: item.PLZ,
+            ort: item.Ort,
+            land: item.Land,
             department: department_id,
           });
         }

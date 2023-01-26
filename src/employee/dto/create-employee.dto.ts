@@ -11,7 +11,19 @@ export class CreateEmployeeDto {
   last_name: string;
 
   @IsString()
-  address: string;
+  street: string;
+
+  @IsString()
+  nr: string;
+
+  @IsString()
+  plz: string;
+
+  @IsString()
+  ort: string;
+
+  @IsString()
+  land: string;
 
   @IsString()
   job_title: string;
