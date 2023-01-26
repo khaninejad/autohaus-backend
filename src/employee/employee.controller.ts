@@ -36,7 +36,7 @@ export class EmployeeController {
     await this.trackHistoryService.create({
       action: 'assign',
       employee: employee._id,
-      user: req.user.user_id,
+      user: req.user.userId,
       created_at: new Date().toISOString(),
     });
   }
