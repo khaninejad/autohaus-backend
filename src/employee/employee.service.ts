@@ -29,6 +29,12 @@ export class EmployeeService {
   findAll() {
     return this.employeeModel.find().populate('department').exec();
   }
+  findByDepartment(department: string) {
+    return this.employeeModel
+      .find({ department: department })
+      .populate('department')
+      .exec();
+  }
 
   findOne(id: string) {
     try {

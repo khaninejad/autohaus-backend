@@ -11,6 +11,7 @@ import {
   UnauthorizedException,
   UseInterceptors,
   UploadedFile,
+  Query,
 } from '@nestjs/common';
 import { EmployeeService } from './employee.service';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
@@ -43,7 +44,10 @@ export class EmployeeController {
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  async findAll() {
+  async findAll(@Query('department') department?: string) {
+    if (department) {
+      return this.employeeService.findByDepartment(department);
+    }
     return this.employeeService.findAll();
   }
 
