@@ -10,28 +10,38 @@ import {
   Delete,
   Patch,
   Logger,
+  UsePipes,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { JwtAuthGuard } from '../user/auth/jwt-auth.guard';
 import { DepartmentService } from './department.service';
 import { CreateDepartmentDto } from './dto/create-department.dto';
 import { UpdateDepartmentDto } from './dto/update-department.dto';
+import { JoiValidationPipe } from '../data.validation';
+import { CreateRequestSchema } from './department.validation';
 
 @Controller('api/department')
 export class DepartmentController {
   constructor(
     private readonly departmentService: DepartmentService,
     private readonly userService: UserService,
-  ) {}
+  ) { }
 
   @UseGuards(JwtAuthGuard)
+  @UsePipes(new JoiValidationPipe(CreateRequestSchema))
   @Post()
   async create(
     @Body() createDepartmentDto: CreateDepartmentDto,
     @Request() req,
   ) {
-    await this.checkPermission(req);
-    return this.departmentService.create(createDepartmentDto);
+    try {
+      await this.checkPermission(req);
+      return this.departmentService.create(createDepartmentDto);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
   }
 
   @UseGuards(JwtAuthGuard)
