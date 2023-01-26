@@ -61,7 +61,13 @@ export class EmployeeController {
     @Request() req,
   ) {
     await this.checkPermission(req);
-    return this.employeeService.update(id, updateEmployeeDto);
+    await this.employeeService.update(id, updateEmployeeDto);
+    await this.trackHistoryService.create({
+      action: 'move',
+      employee: id,
+      user: req.user.userId,
+      created_at: new Date().toISOString(),
+    });
   }
 
   @Delete(':id')

@@ -9,6 +9,7 @@ import {
   Request,
   Delete,
   Patch,
+  Logger,
 } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { JwtAuthGuard } from '../user/auth/jwt-auth.guard';
@@ -52,6 +53,8 @@ export class DepartmentController {
     @Body() updateDepartmentDto: UpdateDepartmentDto,
     @Request() req,
   ) {
+    Logger.debug(id);
+    Logger.warn(updateDepartmentDto);
     await this.checkPermission(req);
     return this.departmentService.update(id, updateDepartmentDto);
   }
